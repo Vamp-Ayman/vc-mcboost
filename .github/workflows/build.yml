@@ -1,0 +1,62 @@
+name: Build ZalithBoost 1.21.11 Fabric Mod
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Compile Fabric 1.21.11 Mod JAR (J706X Edition)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Eclipse Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle 8.12
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.12'
+          cache-read-only: false
+
+      - name: Build Fabric Mod with Loom
+        run: gradle build --no-daemon --stacktrace
+
+      - name: Upload Compiled Mod JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zalith-fps-boost-1.21.11-j706x
+          path: |
+            build/libs/*.jar
+            !build/libs/*-sources.jar
+            !build/libs/*-dev.jar
+          if-no-files-found: error
+
+      - name: Publish Automated GitHub Release
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v2.4.0-j706x-${{ github.run_number }}
+          name: "ZalithBoost 1.21.11 (J706X 65% Res Edition) Build #${{ github.run_number }}"
+          body: |
+            ### ZalithBoost Rendering Engine Overhaul for Minecraft 1.21.11
+            - **Target Launcher:** Zalith Launcher 1.21.11 (Fabric 1.19.0+)
+            - **Hardware Profile:** Lenovo Legion Y700 (J706X · Snapdragon 870 / Adreno 650) @ 65% Resolution (1664x1040)
+            - **Freecam Cave Culling Bypass:** `true` (Disables cave flood-fill occlusion in Freecam so underground caves render cleanly)
+            - **Strict Screen-Space Frustum & Sub-Pixel Culling:** `true` (Min threshold: `1.5px`)
+            - **Adreno 650 JNI GL Deduplication:** `true`
+          files: |
+            build/libs/*.jar
+            !build/libs/*-sources.jar

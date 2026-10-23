@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "zalithboost",
+  "version": "${version}",
+  "name": "ZalithBoost FPS Engine (J706X 1.21.11)",
+  "description": "Full rendering engine rewrite for Minecraft 1.21.11 on Zalith Launcher (J706X @ 65% resolution). Disables cave culling during Freecam while enforcing strict 6-plane screen-space frustum culling, sub-pixel culling, and Adreno 650 JNI GL state deduplication.",
+  "authors": [
+    "ZalithBoost Engine Team"
+  ],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.zalithboost.client.ZalithBoostClient"
+    ]
+  },
+  "mixins": [
+    "zalithboost.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.0",
+    "minecraft": ">=1.21- <=1.21.11",
+    "java": ">=21"
+  },
+  "custom": {
+    "zalith:optimized_device": "J706X",
+    "zalith:resolution_scale": "0.65",
+    "zalith:freecam_cave_cull_off": true
+  }
+}
